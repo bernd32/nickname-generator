@@ -3,13 +3,16 @@ const lengthMax = document.getElementById('length-max');
 const lenghtMin = document.getElementById('length-min');
 const numberOfItems = document.getElementById('number-of-items');
 const resultList = document.getElementById('result-list'); // <ul></ul>
+const maxConsonantsInRow = document.getElementById('consonants-in-row');
+const maxVowelsInRow = document.getElementById('vowels-in-row');
 
 form.addEventListener('submit', event => {
     event.preventDefault();
-    resultList.innerHTML = ''; 
+    resultList.innerHTML = '';
     console.log(length);
     const wordList = getArrayWithRandomWords(
-        numberOfItems.value, lenghtMin.value, lengthMax.value
+        numberOfItems.value, lenghtMin.value, lengthMax.value,
+        maxConsonantsInRow.value, maxVowelsInRow.value
     );
     for (let i = 0; i < wordList.length; i++) {
         resultList.insertAdjacentHTML('afterbegin', `<li>${wordList[i]}</li>`);
@@ -60,8 +63,8 @@ const vowelsWithWeights = {
  * @returns {{item: any, index: number}}
  */
 
-for(let i=0; i<10; i++) {
-    console.log(Math.random()*11);
+for (let i = 0; i < 10; i++) {
+    console.log(Math.random() * 11);
 }
 
 
@@ -107,7 +110,7 @@ function addVowel() {
     return weightedRandom(letters, weights);
 }
 
-function getRandomWord(len = 5, consonantsInWord = 0.5) {
+function getRandomWord(len = 5, consonantsInWord = 0.5, maxConsonantsInRow = 2, maxVowelsInRow = 2) {
     let wordGen = '';
     let skipConsotant = cons => Math.random() > cons ? true : false;
     let isDigram = letter => letter.length == 2 ? true : false;
@@ -119,7 +122,7 @@ function getRandomWord(len = 5, consonantsInWord = 0.5) {
         if (skipConsotant(consonantsInWord)) {
             const vowel = addVowel();
             // skipping a vowel if we already have 2 vowels in row 
-            if (vowelCounter >= 2) {
+            if (vowelCounter >= maxVowelsInRow) {
                 i -= 1;
                 continue;
             } else {
@@ -138,7 +141,7 @@ function getRandomWord(len = 5, consonantsInWord = 0.5) {
                 continue;
             }
             // skipping a consonant if we already have 2 consonants in row 
-            if (consonantCounter >= 2) {
+            if (consonantCounter >= maxConsonantsInRow) {
                 i -= 1;
                 continue;
             } else {
@@ -159,11 +162,14 @@ function getRandomWord(len = 5, consonantsInWord = 0.5) {
  * @param  {number} n       number of words to generate
  * @param  {number} min     minimum length of a word
  * @param  {number} max     maximum length of a word
+ * @param  {number} maxConsonantsInRow
+ * @param  {number} maxVowelsInRow
  */
-function getArrayWithRandomWords(n = 10, min = 3, max = 7) {
+function getArrayWithRandomWords(n = 10, min = 3, max = 7,
+    maxConsonantsInRow = 2, maxVowelsInRow = 2) {
     let words = [];
     for (let i = 0; i < n; i++) {
-        words.push(getRandomWord(getRandomInt(min, max), 0.6));
+        words.push(getRandomWord(getRandomInt(min, max), 0.6, maxConsonantsInRow, maxVowelsInRow));
     }
     return words;
 }
